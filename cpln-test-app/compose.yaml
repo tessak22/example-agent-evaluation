@@ -1,0 +1,5 @@
+services:
+  api:
+    image: node:20-alpine
+    ports:
+      - "8080:8080"

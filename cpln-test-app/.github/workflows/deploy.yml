@@ -1,0 +1,39 @@
+name: Deploy to Control Plane
+
+on:
+  push:
+    branches: [main]
+
+env:
+  CPLN_ORG: ${{ secrets.CPLN_ORG }}
+  CPLN_TOKEN: ${{ secrets.CPLN_TOKEN }}
+  GVC_NAME: production
+  APP_NAME: api
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Control Plane CLI
+        run: npm install -g @controlplane/cli
+
+      - name: Configure CLI
+        run: cpln profile update default --org $CPLN_ORG --token $CPLN_TOKEN
+
+      - name: Build and push image
+        run: |
+          cpln image docker-login
+          docker build -t $CPLN_ORG.registry.cpln.io/$APP_NAME:${{ github.sha }} .
+          docker push $CPLN_ORG.registry.cpln.io/$APP_NAME:${{ github.sha }}
+
+      - name: Deploy workload
+        run: |
+          cpln workload update $APP_NAME \
+            --gvc $GVC_NAME \
+            --set spec.containers.0.image=$CPLN_ORG.registry.cpln.io/$APP_NAME:${{ github.sha }}
+
+      - name: Verify deployment
+        run: |
+          cpln workload get $APP_NAME --gvc $GVC_NAME -o json | jq '.status.ready'

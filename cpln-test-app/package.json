@@ -1,0 +1,9 @@
+{
+  "name": "cpln-test-app",
+  "version": "1.0.0",
+  "description": "Test Node.js app for Control Plane evaluation",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

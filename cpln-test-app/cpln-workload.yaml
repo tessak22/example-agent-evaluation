@@ -1,0 +1,30 @@
+kind: workload
+name: eval-api
+spec:
+  type: serverless
+  containers:
+    - name: api
+      image: gcr.io/knative-samples/helloworld-go
+      cpu: 50m
+      memory: 128Mi
+      ports:
+        - protocol: http
+          number: 8080
+      env:
+        - name: TARGET
+          value: "Control Plane Evaluation"
+  defaultOptions:
+    autoscaling:
+      metric: concurrency
+      target: 100
+      minScale: 0
+      maxScale: 5
+    capacityAI: true
+  firewallConfig:
+    external:
+      inboundAllowCIDR:
+        - 0.0.0.0/0
+      outboundAllowCIDR:
+        - 0.0.0.0/0
+    internal:
+      inboundAllowType: same-gvc
