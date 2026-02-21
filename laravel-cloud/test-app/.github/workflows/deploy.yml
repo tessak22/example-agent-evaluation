@@ -1,0 +1,37 @@
+name: Deploy to Laravel Cloud
+
+on:
+  push:
+    branches: [main]
+
+env:
+  LARAVEL_CLOUD_DEPLOY_HOOK: ${{ secrets.LARAVEL_CLOUD_DEPLOY_HOOK }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, json, bcmath
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run tests
+        run: php artisan test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Trigger Laravel Cloud deployment
+        run: |
+          curl -X POST "$LARAVEL_CLOUD_DEPLOY_HOOK" \
+            -H "Content-Type: application/json" \
+            --fail --silent --show-error

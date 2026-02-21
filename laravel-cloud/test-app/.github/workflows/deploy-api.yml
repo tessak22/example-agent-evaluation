@@ -1,0 +1,53 @@
+name: Deploy via Laravel Cloud API
+
+on:
+  push:
+    branches: [main]
+
+env:
+  LARAVEL_CLOUD_TOKEN: ${{ secrets.LARAVEL_CLOUD_TOKEN }}
+  ENVIRONMENT_SLUG: production
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, json, bcmath
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run tests
+        run: php artisan test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to Laravel Cloud
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "https://cloud.laravel.com/api/environments/$ENVIRONMENT_SLUG/deployments" \
+            -H "Authorization: Bearer $LARAVEL_CLOUD_TOKEN" \
+            -H "Content-Type: application/vnd.api+json" \
+            -H "Accept: application/vnd.api+json")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "201" ]; then
+            echo "Deployment failed with HTTP $HTTP_CODE"
+            echo "$BODY" | jq . 2>/dev/null || echo "$BODY"
+            exit 1
+          fi
+
+          DEPLOY_ID=$(echo "$BODY" | jq -r '.data.id')
+          STATUS=$(echo "$BODY" | jq -r '.data.attributes.status')
+          echo "Deployment $DEPLOY_ID initiated (status: $STATUS)"

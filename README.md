@@ -15,6 +15,7 @@ Every evaluation produces three things:
 | Product | Category | Entries | Sentiment | Blockers | Report |
 |---------|----------|---------|-----------|----------|--------|
 | [Control Plane](control-plane/) | Container Orchestration | 59 | 22 positive · 21 neutral · 16 frustration | 1 | [Findings Report](control-plane/findings-report.md) |
+| [Laravel Cloud](laravel-cloud/) | Managed Laravel Hosting | 70 | 42 positive · 22 neutral · 6 frustration | 0 | [Findings Report](laravel-cloud/findings-report.md) |
 
 ## Evaluation Methodology
 
