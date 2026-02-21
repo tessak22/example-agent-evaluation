@@ -1,59 +1,34 @@
-# Agent-Based Developer Product Evaluation: Control Plane
+# Built for Devs — Agent-Based Product Evaluations
 
-An evaluation of [Control Plane](https://controlplane.com) conducted entirely by an AI agent (Claude Code) acting as a senior engineering leader at a Series A SaaS company. This project demonstrates a structured, multi-phase framework for evaluating developer tools through the lens of a specific persona.
+Real product evaluations conducted by an AI agent walking through the full developer journey — from first landing page visit to live deployments. Each evaluation follows a structured, persona-driven methodology and produces a detailed log of every observation alongside a findings report with actionable results.
 
-## What Is This?
+## What You Get
 
-This is an **agent-based product evaluation** — a methodology where an AI agent walks through the full evaluation journey a developer or engineering leader would take when considering a new platform. The agent follows a structured persona, logs every observation with sentiment and severity, and produces a findings report at the end.
+Every evaluation produces three things:
 
-The product evaluated here is **Control Plane**, a container deployment and orchestration platform. The agent evaluated it across four phases, from reading the homepage to deploying live workloads via the CLI.
+1. **Evaluation Log** — A sequential record of every action the agent took, what it observed, and how it felt about it. Each entry is tagged with sentiment (positive / neutral / frustration), severity, and persona relevance.
+2. **Findings Report** — A structured deliverable with an executive summary, scorecard, developer journey map, critical issues, quick wins, and recommendations.
+3. **Test Artifacts** — Real code, configs, and deployment files created during hands-on testing (Dockerfiles, Terraform configs, CI/CD workflows, YAML manifests, etc.).
 
-## Evaluation Persona
+## Completed Evaluations
 
-| Field | Details |
-|-------|---------|
-| **Role** | Senior Engineering Leadership |
-| **Company** | Series A SaaS, 20-person engineering team |
-| **Current Stack** | Node.js/TypeScript, AWS (ECS/EKS), Terraform, GitHub Actions |
-| **Core Question** | "Could this replace our infrastructure so my engineers spend time on product instead of DevOps, without hiring a platform engineer?" |
+| Product | Category | Entries | Sentiment | Blockers | Report |
+|---------|----------|---------|-----------|----------|--------|
+| [Control Plane](control-plane/) | Container Orchestration | 59 | 22 positive · 21 neutral · 16 frustration | 1 | [Findings Report](control-plane/findings-report.md) |
 
-## Evaluation Phases
+## Evaluation Methodology
 
-| Phase | Description | Entries |
-|-------|-------------|---------|
-| **Phase 1** — Pre-Signup Discovery | Web crawl of homepage, docs, pricing, case studies, and security pages | 1–32 |
-| **Phase 2** — Signup & Onboarding | Authentication methods, org creation, billing flow, onboarding experience | 33–45 |
-| **Phase 3** — Core Workflow | Hands-on CLI testing: deployed workloads, created secrets, tested converters, wrote Terraform and CI/CD configs | 46–59 |
-| **Phase 4** — Findings Report | Structured report with scorecard, journey map, critical issues, and quick wins | Report |
+Each evaluation runs through four phases:
 
-## Key Findings
+| Phase | What Happens |
+|-------|-------------|
+| **Phase 1 — Pre-Signup Discovery** | Homepage, docs, pricing, case studies, security, and trust signals are crawled and assessed from the outside |
+| **Phase 2 — Signup & Onboarding** | Authentication flow, org setup, billing, onboarding experience, and time-to-value are evaluated |
+| **Phase 3 — Core Workflow** | Hands-on testing with real tools — CLI installs, live deployments, API calls, IaC configs, CI/CD pipelines, error handling |
+| **Phase 4 — Findings Report** | Everything is synthesized into a structured report with scores, issues, and recommendations |
 
-- **59 log entries** across 8 evaluation stages
-- **Sentiment**: 22 positive, 21 neutral, 16 frustration
-- **1 blocker**: `cpln stack manifest` (Docker Compose deployment) crashes on all input in CLI v3.9.1
-- **Bright spot**: CLI to live HTTPS endpoint in under 90 seconds with TLS, autoscaling, and firewall defaults
+The agent operates under a defined **persona** (role, seniority, tech stack, priorities) so every observation is grounded in a specific buyer context — not generic commentary.
 
-## Project Structure
+## How It Works
 
-```
-├── controlplane-evaluation-log.md     # Full 59-entry evaluation log
-├── controlplane-findings-report.md    # Structured findings report
-├── cpln-test-app/                     # Artifacts created during hands-on testing
-│   ├── server.js                      #   Node.js test server
-│   ├── Dockerfile                     #   Container definition
-│   ├── cpln-workload.yaml             #   Native CPLN workload definition
-│   ├── k8s-deployment.yaml            #   Kubernetes manifest (input for converter)
-│   ├── converted-k8s.yaml             #   Output of cpln convert
-│   ├── docker-compose.yml             #   Compose file (triggered CLI bug)
-│   ├── terraform/main.tf              #   Terraform configuration
-│   └── .github/workflows/deploy.yml   #   GitHub Actions deployment workflow
-└── README.md
-```
-
-## How It Was Built
-
-The entire evaluation — web research, CLI installation, live deployments, log entries, and the findings report — was performed by Claude Code in a single session using the [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code). The agent installed the Control Plane CLI, created GVCs, deployed workloads to real infrastructure, verified HTTP endpoints, queried logs, and cleaned up resources.
-
-## License
-
-This evaluation and its artifacts are provided as-is for reference purposes.
+Evaluations are conducted by [Claude Code](https://docs.anthropic.com/en/docs/claude-code) following structured prompts that define the persona, evaluation path, output format, and rules of engagement. The agent has access to web browsing, CLI tools, file creation, and real infrastructure — it doesn't just read docs, it actually deploys things and reports what happens.
